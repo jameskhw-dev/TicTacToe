@@ -5,6 +5,8 @@ const WINNING_COMBOS = [
 ];
 
 const board = Array(9).fill(null);
+const placedX = []; // indices of X's pieces in placement order (oldest first)
+const placedO = []; // indices of O's pieces in placement order (oldest first)
 let currentPlayer = 'X';
 let gameOver = false;
 let aiMode = true;
@@ -45,7 +47,6 @@ function checkWinnerOnBoard(b) {
       return { winner: b[i], combo: [i, j, k] };
     }
   }
-  if (b.every(Boolean)) return { winner: null, combo: null, draw: true };
   return null;
 }
 
@@ -53,31 +54,49 @@ function checkWinner() {
   return checkWinnerOnBoard(board);
 }
 
-// --- Minimax AI ---
+// --- Oldest-piece highlight ---
 
-function minimax(b, isMaximizing) {
+function updateOldestHighlight() {
+  cells.forEach(c => c.classList.remove('oldest-x', 'oldest-o'));
+  if (gameOver) return;
+  if (placedX.length >= 3) cells[placedX[0]].classList.add('oldest-x');
+  if (placedO.length >= 3) cells[placedO[0]].classList.add('oldest-o');
+}
+
+// --- Minimax AI (queue-aware) ---
+// Simulates removal before iterating so the freed cell is a valid candidate.
+
+function minimax(b, isMaximizing, qX, qO, depth) {
   const result = checkWinnerOnBoard(b);
-  if (result?.winner === 'O') return 10;
-  if (result?.winner === 'X') return -10;
-  if (result?.draw) return 0;
+  if (result?.winner === 'O') return 10 - depth;
+  if (result?.winner === 'X') return depth - 10;
+  if (depth >= 8) return 0;
 
   if (isMaximizing) {
+    const nb = [...b];
+    const nqO = [...qO];
+    if (nqO.length >= 3) nb[nqO.shift()] = null;
+
     let best = -Infinity;
     for (let i = 0; i < 9; i++) {
-      if (!b[i]) {
-        b[i] = 'O';
-        best = Math.max(best, minimax(b, false));
-        b[i] = null;
+      if (!nb[i]) {
+        const cb = [...nb]; const cqO = [...nqO];
+        cb[i] = 'O'; cqO.push(i);
+        best = Math.max(best, minimax(cb, false, qX, cqO, depth + 1));
       }
     }
     return best;
   } else {
+    const nb = [...b];
+    const nqX = [...qX];
+    if (nqX.length >= 3) nb[nqX.shift()] = null;
+
     let best = Infinity;
     for (let i = 0; i < 9; i++) {
-      if (!b[i]) {
-        b[i] = 'X';
-        best = Math.min(best, minimax(b, true));
-        b[i] = null;
+      if (!nb[i]) {
+        const cb = [...nb]; const cqX = [...nqX];
+        cb[i] = 'X'; cqX.push(i);
+        best = Math.min(best, minimax(cb, true, cqX, qO, depth + 1));
       }
     }
     return best;
@@ -85,22 +104,24 @@ function minimax(b, isMaximizing) {
 }
 
 function getAiMove() {
-  const empty = board.map((v, i) => (v ? null : i)).filter(i => i !== null);
-
   if (aiDifficulty === 'easy') {
+    const empty = board.map((v, i) => (v ? null : i)).filter(i => i !== null);
     return empty[Math.floor(Math.random() * empty.length)];
   }
 
-  // Hard: unbeatable minimax
+  // Pre-apply O's removal so the freed cell is a valid candidate for Hard AI.
+  const nb = [...board];
+  const nqO = [...placedO];
+  if (nqO.length >= 3) nb[nqO.shift()] = null;
+
   let best = -Infinity;
-  let move = empty[0];
-  for (const i of empty) {
-    board[i] = 'O';
-    const score = minimax(board, false);
-    board[i] = null;
-    if (score > best) {
-      best = score;
-      move = i;
+  let move = nb.findIndex(v => !v);
+  for (let i = 0; i < 9; i++) {
+    if (!nb[i]) {
+      const cb = [...nb]; const cqO = [...nqO];
+      cb[i] = 'O'; cqO.push(i);
+      const score = minimax(cb, false, [...placedX], cqO, 0);
+      if (score > best) { best = score; move = i; }
     }
   }
   return move;
@@ -110,6 +131,7 @@ function getAiMove() {
 
 function finishGame(result) {
   gameOver = true;
+  cells.forEach(c => c.classList.remove('oldest-x', 'oldest-o'));
   if (result.winner) {
     scores[result.winner]++;
     updateScoreDisplay();
@@ -127,15 +149,25 @@ function finishGame(result) {
 }
 
 function placeMove(idx, player) {
+  const queue = player === 'X' ? placedX : placedO;
+
+  // Remove oldest piece when player already has 3 on the board.
+  if (queue.length >= 3) {
+    const oldIdx = queue.shift();
+    board[oldIdx] = null;
+    cells[oldIdx].textContent = '';
+    cells[oldIdx].className = 'cell';
+  }
+
   board[idx] = player;
   cells[idx].textContent = player;
   cells[idx].classList.add(player.toLowerCase(), 'taken', 'pop');
+  queue.push(idx);
+
+  updateOldestHighlight();
 
   const result = checkWinner();
-  if (result) {
-    finishGame(result);
-    return true;
-  }
+  if (result) { finishGame(result); return true; }
   return false;
 }
 
@@ -174,6 +206,8 @@ function handleClick(e) {
 
 function resetGame() {
   board.fill(null);
+  placedX.length = 0;
+  placedO.length = 0;
   currentPlayer = 'X';
   gameOver = false;
 

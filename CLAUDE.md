@@ -15,7 +15,8 @@ TicTacToe/
 ## Architecture
 - **State**: flat `board` array (9 elements, null | 'X' | 'O'), `currentPlayer`, `gameOver`, `scores`, `aiMode`, `aiDifficulty`
 - **Win detection**: `checkWinnerOnBoard(b)` checks all 8 `WINNING_COMBOS` on any board — used by both the live game and the minimax AI
-- **AI**: minimax algorithm in `minimax(b, isMaximizing)`, entry point `getAiMove()` dispatches to random (Easy) or minimax (Hard)
+- **AI**: queue-aware minimax in `minimax(b, isMaximizing, qX, qO, depth)` simulates removal before iterating so the freed cell is a valid candidate; depth-limited to 8; `getAiMove()` dispatches to random (Easy) or minimax (Hard)
+- **Piece queues**: `placedX[]` / `placedO[]` track placement order (oldest first) for both live game and AI simulation
 - **No framework**: pure DOM manipulation via `querySelectorAll` + event delegation
 
 ## Features
@@ -30,6 +31,7 @@ TicTacToe/
 - Responsive layout (works on mobile)
 - CSS animations: pop-in on place, pulse on winning cells, glow on active player score card
 - Board disables with "AI is thinking…" status during AI turn (450ms delay for UX)
+- **3-piece sliding rule**: each player holds max 3 pieces; on the 4th move the oldest piece is automatically removed before placing the new one; the oldest piece pulses (faded) to signal it's next to go
 
 ## History
 
@@ -49,6 +51,13 @@ TicTacToe/
 - Extracted `placeMove` and `finishGame` helpers shared by human and AI turns
 - O score card label updates to "AI" in single-player mode
 - Pill-style difficulty buttons and CSS toggle switch styled to match existing dark theme
+
+### 2026-05-10 — 3-piece sliding rule
+- Each player holds max 3 pieces; 4th move removes the oldest automatically
+- `placedX` / `placedO` queues track placement order for live game and minimax simulation
+- Minimax updated to be queue-aware: pre-applies removal so the freed cell is a valid AI candidate; depth-limited to 8 half-moves
+- Oldest piece pulses (faded, colored) to telegraph the upcoming removal
+- Static rule hint added below the board
 
 ### 2026-05-10 — vs AI default
 - vs AI mode now enabled by default on page load (player is X, AI is O)

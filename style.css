@@ -263,10 +263,40 @@ h1 {
   to   { box-shadow: 0 0 28px rgba(255, 215, 0, 0.6); }
 }
 
+/* Oldest-piece indicator — fades and pulses to signal it will be removed next */
+.cell.oldest-x {
+  opacity: 0.45;
+  animation: pulse-oldest-x 1.1s ease-in-out infinite alternate;
+}
+
+.cell.oldest-o {
+  opacity: 0.45;
+  animation: pulse-oldest-o 1.1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-oldest-x {
+  from { opacity: 0.3; box-shadow: inset 0 0 10px rgba(233, 69, 96, 0.2); }
+  to   { opacity: 0.55; box-shadow: inset 0 0 18px rgba(233, 69, 96, 0.4); }
+}
+
+@keyframes pulse-oldest-o {
+  from { opacity: 0.3; box-shadow: inset 0 0 10px rgba(79, 195, 247, 0.2); }
+  to   { opacity: 0.55; box-shadow: inset 0 0 18px rgba(79, 195, 247, 0.4); }
+}
+
 /* Disabled board overlay */
 .board.disabled .cell:not(.taken) {
   cursor: default;
   pointer-events: none;
+}
+
+/* Rule hint */
+.rule-hint {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
+  text-align: center;
+  max-width: 300px;
 }
 
 /* Controls */
