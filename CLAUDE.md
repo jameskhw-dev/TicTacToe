@@ -21,6 +21,7 @@ TicTacToe/
 ## Features
 - Two-player local multiplayer (X vs O)
 - Single-player vs AI with Easy (random) and Hard (unbeatable minimax) difficulty
+- **vs AI mode is the default** on page load; toggle to switch to 2 Player
 - Mode toggle: 2 Player ↔ vs AI; difficulty selector appears in AI mode
 - Win and draw detection with visual highlighting
 - Persistent score tracking across rounds (X wins, O/AI wins, draws)
@@ -48,3 +49,9 @@ TicTacToe/
 - Extracted `placeMove` and `finishGame` helpers shared by human and AI turns
 - O score card label updates to "AI" in single-player mode
 - Pill-style difficulty buttons and CSS toggle switch styled to match existing dark theme
+
+### 2026-05-10 — vs AI default
+- vs AI mode now enabled by default on page load (player is X, AI is O)
+- Difficulty row visible and toggle checked on initial render
+- Score card shows "AI" label from the start; status reads "Your turn (X)"
+- Init now calls `resetGame()` instead of `highlightActivePlayer()` for a fully consistent initial state

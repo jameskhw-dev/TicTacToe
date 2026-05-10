@@ -13,13 +13,13 @@
     <div class="mode-row">
       <span class="mode-label">2 Player</span>
       <label class="toggle-switch">
-        <input type="checkbox" id="mode-toggle" />
+        <input type="checkbox" id="mode-toggle" checked />
         <span class="toggle-track"></span>
       </label>
       <span class="mode-label">vs AI</span>
     </div>
 
-    <div class="difficulty-row" id="difficulty-row">
+    <div class="difficulty-row" id="difficulty-row" style="display: flex">
       <button class="diff-btn active" data-diff="easy">Easy</button>
       <button class="diff-btn" data-diff="hard">Hard</button>
     </div>
@@ -34,12 +34,12 @@
         <span class="score" id="score-draws">0</span>
       </div>
       <div class="score-card" id="score-o">
-        <span class="player-label o">O</span>
+        <span class="player-label o">AI</span>
         <span class="score" id="score-o-val">0</span>
       </div>
     </div>
 
-    <div class="status" id="status">Player X's turn</div>
+    <div class="status" id="status">Your turn (X)</div>
 
     <div class="board" id="board">
       <div class="cell" data-index="0"></div>

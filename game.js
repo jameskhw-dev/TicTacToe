@@ -7,7 +7,7 @@ const WINNING_COMBOS = [
 const board = Array(9).fill(null);
 let currentPlayer = 'X';
 let gameOver = false;
-let aiMode = false;
+let aiMode = true;
 let aiDifficulty = 'easy';
 const scores = { X: 0, O: 0, draws: 0 };
 
@@ -218,4 +218,4 @@ diffBtns.forEach(btn => {
 });
 
 // Init
-highlightActivePlayer();
+resetGame();
