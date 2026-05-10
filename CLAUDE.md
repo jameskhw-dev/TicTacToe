@@ -34,4 +34,4 @@ TicTacToe/
 - Dark glassmorphism UI with gradient background
 - Winning cells highlighted in gold with pulse animation
 - Active player score card highlighted with colored glow
-- Initial commit pushed to GitHub: `desirekhw/TicTacToe`
+- Initial commit pushed to GitHub: `jameskhw-dev/TicTacToe`
