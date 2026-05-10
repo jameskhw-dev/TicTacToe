@@ -15,7 +15,7 @@ TicTacToe/
 ## Architecture
 - **State**: flat `board` array (9 elements, null | 'X' | 'O'), `currentPlayer`, `gameOver`, `scores`, `aiMode`, `aiDifficulty`
 - **Win detection**: `checkWinnerOnBoard(b)` checks all 8 `WINNING_COMBOS` on any board — used by both the live game and the minimax AI
-- **AI**: queue-aware minimax in `minimax(b, isMaximizing, qX, qO, depth)` simulates removal before iterating so the freed cell is a valid candidate; depth-limited to 8; `getAiMove()` dispatches to random (Easy) or minimax (Hard)
+- **AI**: queue-aware minimax in `minimax(b, isMaximizing, qX, qO, depth)` simulates removal before iterating; the just-freed cell is excluded from candidates so the AI cannot re-place on its own flashing tile; depth-limited to 8; `getAiMove()` dispatches to random (Easy) or minimax (Hard)
 - **Piece queues**: `placedX[]` / `placedO[]` track placement order (oldest first) for both live game and AI simulation
 - **No framework**: pure DOM manipulation via `querySelectorAll` + event delegation
 
@@ -58,6 +58,10 @@ TicTacToe/
 - Minimax updated to be queue-aware: pre-applies removal so the freed cell is a valid AI candidate; depth-limited to 8 half-moves
 - Oldest piece pulses (faded, colored) to telegraph the upcoming removal
 - Static rule hint added below the board
+
+### 2026-05-10 — Fix: AI no longer re-places on its own flashing tile
+- Hard mode `getAiMove()` and both branches of `minimax` now track the freed index and exclude it from candidates
+- Prevents the AI from "re-placing" on the same cell as its oldest (pulsing) piece, which looked like the move was never made
 
 ### 2026-05-10 — vs AI default
 - vs AI mode now enabled by default on page load (player is X, AI is O)

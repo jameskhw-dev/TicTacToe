@@ -75,11 +75,12 @@ function minimax(b, isMaximizing, qX, qO, depth) {
   if (isMaximizing) {
     const nb = [...b];
     const nqO = [...qO];
-    if (nqO.length >= 3) nb[nqO.shift()] = null;
+    let freedO = -1;
+    if (nqO.length >= 3) { freedO = nqO.shift(); nb[freedO] = null; }
 
     let best = -Infinity;
     for (let i = 0; i < 9; i++) {
-      if (!nb[i]) {
+      if (!nb[i] && i !== freedO) {
         const cb = [...nb]; const cqO = [...nqO];
         cb[i] = 'O'; cqO.push(i);
         best = Math.max(best, minimax(cb, false, qX, cqO, depth + 1));
@@ -89,11 +90,12 @@ function minimax(b, isMaximizing, qX, qO, depth) {
   } else {
     const nb = [...b];
     const nqX = [...qX];
-    if (nqX.length >= 3) nb[nqX.shift()] = null;
+    let freedX = -1;
+    if (nqX.length >= 3) { freedX = nqX.shift(); nb[freedX] = null; }
 
     let best = Infinity;
     for (let i = 0; i < 9; i++) {
-      if (!nb[i]) {
+      if (!nb[i] && i !== freedX) {
         const cb = [...nb]; const cqX = [...nqX];
         cb[i] = 'X'; cqX.push(i);
         best = Math.min(best, minimax(cb, true, cqX, qO, depth + 1));
@@ -109,15 +111,16 @@ function getAiMove() {
     return empty[Math.floor(Math.random() * empty.length)];
   }
 
-  // Pre-apply O's removal so the freed cell is a valid candidate for Hard AI.
   const nb = [...board];
   const nqO = [...placedO];
-  if (nqO.length >= 3) nb[nqO.shift()] = null;
+  let freedIdx = -1;
+  if (nqO.length >= 3) { freedIdx = nqO.shift(); nb[freedIdx] = null; }
 
   let best = -Infinity;
-  let move = nb.findIndex(v => !v);
+  let move = -1;
   for (let i = 0; i < 9; i++) {
-    if (!nb[i]) {
+    if (!nb[i] && i !== freedIdx) {
+      if (move === -1) move = i;
       const cb = [...nb]; const cqO = [...nqO];
       cb[i] = 'O'; cqO.push(i);
       const score = minimax(cb, false, [...placedX], cqO, 0);
