@@ -155,13 +155,20 @@ function placeMove(idx, player) {
   if (queue.length >= 3) {
     const oldIdx = queue.shift();
     board[oldIdx] = null;
-    cells[oldIdx].textContent = '';
-    cells[oldIdx].className = 'cell';
+    const old = cells[oldIdx];
+    old.removeAttribute('style');   // clear any animation inline styles
+    old.className = 'cell';         // strip all game classes
+    void old.offsetWidth;           // force reflow to flush pending paints
+    old.textContent = '';
   }
 
   board[idx] = player;
-  cells[idx].textContent = player;
-  cells[idx].classList.add(player.toLowerCase(), 'taken', 'pop');
+  const cell = cells[idx];
+  cell.removeAttribute('style');
+  cell.textContent = player;
+  cell.classList.add(player.toLowerCase(), 'taken');
+  void cell.offsetWidth;            // reflow so pop animation always restarts
+  cell.classList.add('pop');
   queue.push(idx);
 
   updateOldestHighlight();
