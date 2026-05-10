@@ -34,6 +34,97 @@ h1 {
   filter: drop-shadow(0 0 20px rgba(233, 69, 96, 0.4));
 }
 
+/* Mode toggle row */
+.mode-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mode-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 13px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transition: transform 0.3s, background 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-track {
+  background: rgba(79, 195, 247, 0.25);
+  border-color: #4fc3f7;
+}
+
+.toggle-switch input:checked + .toggle-track::after {
+  transform: translateX(22px);
+  background: #4fc3f7;
+}
+
+/* Difficulty row */
+.difficulty-row {
+  display: none;
+  gap: 8px;
+}
+
+.diff-btn {
+  padding: 6px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s, box-shadow 0.15s;
+}
+
+.diff-btn:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.diff-btn.active {
+  background: rgba(79, 195, 247, 0.18);
+  border-color: #4fc3f7;
+  color: #4fc3f7;
+}
+
 /* Scoreboard */
 .scoreboard {
   display: flex;

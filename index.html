@@ -10,6 +10,20 @@
   <div class="container">
     <h1>Tic Tac Toe</h1>
 
+    <div class="mode-row">
+      <span class="mode-label">2 Player</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="mode-toggle" />
+        <span class="toggle-track"></span>
+      </label>
+      <span class="mode-label">vs AI</span>
+    </div>
+
+    <div class="difficulty-row" id="difficulty-row">
+      <button class="diff-btn active" data-diff="easy">Easy</button>
+      <button class="diff-btn" data-diff="hard">Hard</button>
+    </div>
+
     <div class="scoreboard">
       <div class="score-card" id="score-x">
         <span class="player-label x">X</span>
